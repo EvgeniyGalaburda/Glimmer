@@ -2,6 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import authRoutes from './routes/authRoutes.js'
 import userRoutes from './routes/userRoutes.js'
+import postRoutes from './routes/postRoute.js'
+
 import connectMongoDB from './db/connectMongoDB.js'
 import cookieParser from "cookie-parser";
 import {v2 as cloudinary} from 'cloudinary'
@@ -22,7 +24,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes)
+app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes)
 
 
 app.listen(PORT, () => {
