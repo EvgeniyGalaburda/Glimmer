@@ -14,7 +14,7 @@ const Sidebar = () => {
     };
 
   return (
-    <div className='md:flex-[2-2-0] max-w-52 '>
+    <div className='md:flex-[2-2-0]'>
         <div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full p-2'>
             <Link to='/' className='flex justify-center md:justify-start'>
                 <img src={glimmer} className='md:w-12 md:h-12  w-10 rounded-full' alt="" />
