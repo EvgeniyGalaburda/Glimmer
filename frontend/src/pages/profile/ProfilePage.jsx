@@ -11,8 +11,11 @@ import { FaArrowLeft } from 'react-icons/fa6'
 import {IoCalendarOutline} from 'react-icons/io5'
 import { FaLink } from 'react-icons/fa'
 import {MdEdit} from 'react-icons/md'
+import { useQuery } from '@tanstack/react-query'
 
 const ProfilePage = () => {
+    const {data, isError, isLoading} = useQuery({queryKey: ['authUser']});
+
     const [coverImg, setCoverImg] = useState(null);
     const [profileImg, setProfileImg] = useState(null);
     const [feedType, setFeedType] = useState('posts');
@@ -20,7 +23,6 @@ const ProfilePage = () => {
     const coverImgRef = useRef(null);
     const profileImgRef = useRef(null);
 
-    const isLoading = false;
     const isMyProfile = true;
 
     const user = {
@@ -81,13 +83,13 @@ const ProfilePage = () => {
                                 <div className='avatar absolute -bottom-16 left-4'>
                                     <div className='w-32 rounded-full relative group/avatar'>
                                         <img src={profileImg || user?.profileImg || '/avatar-placeholder.png'} />
-                                        <div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
                                             {isMyProfile && (
+                                            <div className='absolute top-5 right-3 p-1 bg-primary rounded-full group-hover/avatar:opacity-100 opacity-0 cursor-pointer'>
                                                 <MdEdit
                                                     className='w-4 h-4 text-white'
                                                     onClick={() => profileImgRef.current.click()}/>
+                                            </div>
                                             )}
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +100,7 @@ const ProfilePage = () => {
                                         className='btn btn-outline rounded-full btn-sm'
                                         onClick={() => alert("Followed successfully!")}>Follow</button>
                                 )}
-                                {(coverImg || profileImg) && (
+                                {(coverImg || profileImg) && isMyProfile && (
                                     <button 
                                         className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
                                         onClick={() => alert("Profile updated successfully!")}>Update</button>
@@ -162,10 +164,9 @@ const ProfilePage = () => {
                                 </div>
 
                             </div>
-                            <Posts/>
                         </>
                     )}
-                    
+                    <Posts/>
                 </div>
             </div>
         </>

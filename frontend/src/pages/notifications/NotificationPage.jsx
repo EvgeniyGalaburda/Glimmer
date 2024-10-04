@@ -4,7 +4,6 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from 'react-icons/fa';
 import { FaHeart } from 'react-icons/fa6';
-import RightPanel from '../../components/common/RightPanel'
 
 const NotificationPage = () => {
     const isLoading = false;
@@ -74,7 +73,6 @@ const NotificationPage = () => {
                 </div>
             ))}
         </div>
-        <RightPanel/>
     </>
   )
 }

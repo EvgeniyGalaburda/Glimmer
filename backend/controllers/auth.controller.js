@@ -43,7 +43,7 @@ export const signup = async (req, res) => {
 
             res.status(201).json({
                 _id: newUser._id,
-                fullname: newUser.fullname,
+                fullName: newUser.fullName,
                 username: newUser.username,
                 email: newUser.email,
                 followers: newUser.followers,

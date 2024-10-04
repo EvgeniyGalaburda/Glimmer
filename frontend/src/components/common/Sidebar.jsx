@@ -5,13 +5,35 @@ import {IoNotifications} from 'react-icons/io5';
 import { FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import {BiLogOut} from 'react-icons/bi';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
 const Sidebar = () => {
-    const data = {
-        fullname: 'Evgeniy Galaburda',
-        username: 'EugeneGLB',
-        profileImg: '/avatars/boy1.png'
-    };
+    const queryClient = useQueryClient();
+    const {mutate: logout, isError, isPending, error} = useMutation({
+        mutationFn: async () => {
+            try {
+                const res = await fetch('/api/auth/logout',{
+                    method: 'POST',
+                })
+                const data = await res.json();
+
+                if(data.error) return null;
+
+                if(!res.ok) throw new Error(data.error);
+                else {
+                    toast.success('Loged out successfully!');
+                    queryClient.invalidateQueries({queryKey: ['authUser']});    
+                }
+                return data;
+            } catch (error) {
+                toast.error(error.message)
+            }
+        } 
+    })
+
+
+    const {data} = useQuery({queryKey: ['authUser']})
 
   return (
     <div className='md:flex-[2-2-0]'>
@@ -41,16 +63,16 @@ const Sidebar = () => {
             </ul>
             {data && (
                 <Link to={`/profile/${data.username}`}
-                      className='mt-auto mb-7 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full'>
+                      className='mt-auto mb-7 flex gap-2 items-center transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full'>
                         <div className='avatar hidden md:inline-flex'>
                             <div className='w-8 rounded-full'><img src={data?.profileImg || '/avatar-placeholder.png'} alt="" /></div>
                         </div>
-                        <div className='flex md:justify-between justify-center flex-1'>
-                            <div className='hidden md:block'>
-                                <p className='text-white font-bold text-sm w-20 truncate'>{data?.fullname}</p>
-                                <p className='text-slate-500 text-sm'>@{data?.username}</p>
+                        <div className='flex md:justify-between justify-center items-center flex-1'>
+                            <div className='hidden md:flex flex-col justify-start'>
+                                <p className='text-white font-bold text-sm w-20 truncate'>{data?.fullName}</p>
+                                <p className='text-slate-500 text-xs'>@{data?.username}</p>
                             </div>
-                            <BiLogOut className='w-5 h-5 cursor pointer'/>
+                            <BiLogOut onClick={(e) => {e.preventDefault(); logout()}} className='w-5 h-5 cursor pointer'/>
                         </div>
                 </Link>
             )}
