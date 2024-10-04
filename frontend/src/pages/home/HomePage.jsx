@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Posts from "../../components/common/Posts";
 import CreatePost from "./CreatePost";
-import RightPanel from "../../components/common/RightPanel";
+
 
 export default function HomePage() {
   const [feedType, setFeedType] = useState("forYou");
@@ -33,7 +33,6 @@ export default function HomePage() {
 
         <Posts/>
       </div>
-      <RightPanel/>
     </>
   );
 }
