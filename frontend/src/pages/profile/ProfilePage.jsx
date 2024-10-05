@@ -166,7 +166,7 @@ const ProfilePage = () => {
                             </div>
                         </>
                     )}
-                    <Posts/>
+                    <Posts feedType={feedType}/>
                 </div>
             </div>
         </>

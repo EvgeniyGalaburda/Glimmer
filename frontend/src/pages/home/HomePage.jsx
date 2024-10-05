@@ -31,7 +31,7 @@ export default function HomePage() {
         </div>
         <CreatePost/>
 
-        <Posts/>
+        <Posts feedType={feedType}/>
       </div>
     </>
   );
