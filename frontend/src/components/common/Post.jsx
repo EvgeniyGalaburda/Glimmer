@@ -139,12 +139,21 @@ const Post = ({ post }) => {
 					</div>
 					<div className='flex flex-col gap-3 overflow-hidden'>
 						<span>{post.text}</span>
-						{post.img && (
+						{post.img && (<>
                                 <img
                                     src={post.img}
                                     className="h-80 object-contain rounded-xl border border-gray-700"
-                                    alt=''
+                                    onClick={() => document.getElementById("image_modal" + post._id).showModal()}
                                 />
+								<dialog id={`image_modal${post._id}`} className='modal'>
+									<div className="modal-box p-0 m-0 borded-none outline-none">
+									<img src={post.img} className="" />
+									</div>
+									<form method='dialog' className='modal-backdrop'>
+									<button className='outline-none'>close</button>
+									</form>
+								</dialog>
+								</>
 						)}
 					</div>
 					<div className='flex justify-between mt-3'>
