@@ -33,13 +33,36 @@ const Post = ({ post }) => {
 				throw new Error(error)
 			}
 		}
+	});
+	const {mutate: likePost, isPending: isLiking} = useMutation({
+		mutationFn: async () => {
+			try {
+				const res = await fetch(`/api/posts/like/${post._id}`, {
+					method: 'POST'
+				})
+				const data = await res.json();
+				if(!res.ok) throw new Error(data.error);
+				return data;
+			} catch (error) {
+				throw new Error(error)
+			}
+		},
+		onSuccess: (updatedLikes) => {
+			queryClient.setQueryData(['posts'], (oldData) => {
+				return oldData.map((p) => {
+					if(p._id === post._id) return {...p, likes: updatedLikes}
+		
+					return p;
+				})
+			})
+		}
 	})
 	const postOwner = post.user;
-	const isLiked = false;
+	const isLiked = post.likes.includes(authUser._id);
 
 	const isMyPost = authUser._id === post.user._id;
 
-	const formattedDate = "1h";
+	const formattedDate = new Date(post.createdAt).toLocaleDateString();
 
 	const isCommenting = false;
 
@@ -51,7 +74,10 @@ const Post = ({ post }) => {
 		e.preventDefault();
 	};
 
-	const handleLikePost = () => {};
+	const handleLikePost = () => {
+		if(isLiking) return;
+		likePost();
+	};
 
 	return (
 		<>
@@ -142,7 +168,7 @@ const Post = ({ post }) => {
 										/>
 										<button className='btn btn-secondary rounded-full btn-sm text-white px-4'>
 											{isCommenting ? (
-												<span className='loading loading-spinner loading-md'></span>
+												<LoadingSpinner size="sm"/>
 											) : (
 												"Post"
 											)}
@@ -161,7 +187,7 @@ const Post = ({ post }) => {
 								{!isLiked && (
 									<FaRegHeart className='w-4 h-4 cursor-pointer text-slate-500 group-hover:text-pink-500' />
 								)}
-								{isLiked && <FaRegHeart className='w-4 h-4 cursor-pointer text-pink-500 ' />}
+								{isLiked &&  <FaRegHeart className='w-4 h-4 cursor-pointer text-pink-500 ' />}
 
 								<span
 									className={`text-sm text-slate-500 group-hover:text-pink-500 ${
