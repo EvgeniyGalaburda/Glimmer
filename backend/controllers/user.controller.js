@@ -91,7 +91,7 @@ export const getSuggestedUsers = async (req, res) => {
 };
 
 export const updateUserProfile = async (req, res) => {
-    const {fullname, email, username, currentPassword, newPassword, bio, link} = req.body;
+    const {fullName, email, username, currentPassword, newPassword, bio, link} = req.body;
     let {profileImg, coverImg} = req.body;
 
     const userId = req.user._id;
@@ -127,8 +127,16 @@ export const updateUserProfile = async (req, res) => {
             const uploadedResponse = await cloudinary.uploader.upload(coverImg)
             coverImg = uploadedResponse.secure_url;
         }
+        
+        const existingUsername = await User.findOne({username});
+        if(existingUsername && (existingUsername.username != user.username)) {
+            return res.status(400).json({error: "Username is already taken"});}
 
-        user.fullName = fullname || user.fullName;
+        const existingEmail = await User.findOne({email});
+        if(existingEmail && (existingEmail.email != user.email)) {
+            return res.status(400).json({error: "Email is already taken"});}
+        
+        user.fullName = fullName || user.fullName;
         user.email = email || user.email;
         user.username = username || user.username;
         user.bio = bio || user.bio;

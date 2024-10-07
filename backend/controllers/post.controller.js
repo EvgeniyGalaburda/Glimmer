@@ -115,7 +115,6 @@ export const likePost = async (req, res) => {
             await post.save();
             
           if(post.user.toString() !== userId.toString()){ 
-                console.log(post.user, userId)
                 const notification = new Notification({
                 from: userId,
                 to: post.user,

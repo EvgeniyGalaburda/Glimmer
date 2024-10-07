@@ -4,29 +4,32 @@ import toast from 'react-hot-toast'
 
 import Posts from '../../components/common/Posts'
 
-import {POSTS} from '../../utils/db/dummy'
+
 import ProfileHeaderSkeleton from '../../components/skeletons/ProfileHeaderSkeleton'
 import EditProfileModal from './EditProfileModal'
+import useFollow from '../../hooks/useFollow'
 
 import { FaArrowLeft } from 'react-icons/fa6'
 import {IoCalendarOutline} from 'react-icons/io5'
 import { FaLink } from 'react-icons/fa'
 import {MdEdit} from 'react-icons/md'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { formatMemberSinceData } from '../../utils/date'
+import LoadingSpinner from '../../components/common/LoadingSpinner'
 
 const ProfilePage = () => {
+    const queryClient = useQueryClient();
     const {data: authUser} = useQuery({queryKey: ['authUser']});
-
     const [coverImg, setCoverImg] = useState(null);
     const [profileImg, setProfileImg] = useState(null);
     const [feedType, setFeedType] = useState('posts');
     const {username} = useParams();
+    const {follow} = useFollow();
 
     const coverImgRef = useRef(null);
     const profileImgRef = useRef(null);
 
-    const isMyProfile = true;
+    
 
     const {data: user, isLoading, refetch, isRefetching} = useQuery({
         queryKey: ['userProfile'],
@@ -44,6 +47,43 @@ const ProfilePage = () => {
         },
         retry:false
     });
+
+    const {mutate: updateProfile, isPending: isUpdatingProfile} = useMutation({
+        mutationFn: async () => {
+            try {
+                const res = await fetch('/api/users/update', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":'application/json',
+                    },
+                    body: JSON.stringify({
+                        coverImg,
+                        profileImg
+                    }),
+                })
+                const data = res.json();
+
+                if(!res.ok) throw new Error(data.error);
+                
+                return data;
+            } catch (error) {
+                toast.error(error.message)
+            }
+        },
+        onSuccess: () => {
+            toast.success("Profile updated!");
+            Promise.all([
+                queryClient.invalidateQueries({queryKey: ['authUser']}),
+                queryClient.invalidateQueries({queryKey: ['userProfile']})
+            ]);
+            setCoverImg(null);
+            setProfileImg(null);
+        }
+    }) 
+
+    const isMyProfile = authUser?._id === user?._id;
+    const amIFollowing = authUser?.following.includes(user?._id);
+    const {data: posts} = useQuery({queryKey: ['posts']});
 
     useEffect(() => {
         refetch();
@@ -73,7 +113,7 @@ const ProfilePage = () => {
                                 <Link to='/'><FaArrowLeft className='w-4 h-4'/></Link>
                                 <div className='flex flex-col'>
                                     <p className='font-bold text-lg'>{user?.fullName}</p>
-                                    <span className='text-sm text-slate-500'>{POSTS?.length} post</span>
+                                    <span className='text-sm text-slate-500'>{posts?.length} post</span>
                                 </div>
                             </div>
                             <div className='relative group/cover'>
@@ -106,16 +146,20 @@ const ProfilePage = () => {
                                 </div>
                             </div>
                             <div className='flex justify-end px-4 mt-5'>
-                                {isMyProfile && <EditProfileModal/>}
+                                {isMyProfile && <EditProfileModal authUser={authUser}/>}
                                 {!isMyProfile && (
                                     <button
                                         className='btn btn-outline rounded-full btn-sm'
-                                        onClick={() => alert("Followed successfully!")}>Follow</button>
+                                        onClick={() => follow(user?._id)}>
+                                            {amIFollowing ? "Unfollow":"Follow"}
+                                        </button>
                                 )}
                                 {(coverImg || profileImg) && isMyProfile && (
                                     <button 
                                         className='btn btn-primary rounded-full btn-sm text-white px-4 ml-2'
-                                        onClick={() => alert("Profile updated successfully!")}>Update</button>
+                                        onClick={() => updateProfile()}>
+                                            {isUpdatingProfile?<LoadingSpinner/>:"Update"}
+                                        </button>
                                 )}
                             </div>
 

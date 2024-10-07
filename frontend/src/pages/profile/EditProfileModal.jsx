@@ -1,6 +1,13 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
+import toast from 'react-hot-toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
+import { useNavigate } from 'react-router-dom';
 
-const EditProfileModal = () => {
+
+const EditProfileModal = ({authUser}) => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     fullName: '',
     username:'',
@@ -9,8 +16,52 @@ const EditProfileModal = () => {
     link:'',
     newPassword:'',
     currentPassword:'',
-
   });
+ 
+  const {mutate: updateProfile, isPending: isUpdatingProfile} = useMutation({
+    mutationFn: async () => {
+        try {
+            const res = await fetch('/api/users/update', {
+                method: "POST",
+                headers: {
+                    "Content-Type":'application/json',
+                },
+                body: JSON.stringify(formData),
+            })
+            const data = await res.json();
+
+            if(!res.ok) throw new Error(data.error);
+            
+            return data;
+        } catch (error) {
+            toast.error(error.message);
+            throw new Error(error);
+        }
+    },
+    onSuccess: () => {
+        toast.success("Profile updated!");
+        Promise.all([
+            queryClient.invalidateQueries({queryKey: ['authUser']}),
+            queryClient.invalidateQueries({queryKey: ['userProfile']})
+        ]);
+        if(formData.username) navigate(`/profile/${formData.username}`)
+        
+    }
+}) 
+
+useEffect(()=>{
+  if(authUser){
+    setFormData({
+      fullName: authUser.fullName,
+      username: authUser.username,
+      email: authUser.email,
+      bio: authUser.bio,
+      link: authUser.link,
+      newPassword: '',
+      currentPassword: ''
+    })
+  }
+},[authUser])
 
   const handleInputChange = (e) => {
     setFormData({...formData, [e.target.name]: e.target.value})
@@ -27,7 +78,9 @@ const EditProfileModal = () => {
           <h3 className='font-bold text-lg my-3'>Update Profile</h3>
           <form
             className='flex flex-col gap-4'
-            onSubmit={(e) => {e.preventDefault(); alert('Profile updated!')}}>
+            onSubmit={(e) => {e.preventDefault(); 
+                              updateProfile();
+            }}>
               <div className='flex flex-wrap gap-2'>
                 <input 
                   type="text"
@@ -82,7 +135,9 @@ const EditProfileModal = () => {
                   value={formData.link}
                   name='link'
                   onChange={handleInputChange} />
-                <button className='btn btn-primary rounded-full btn-sm text-white'>Update</button>
+                <button type='submit' className='btn btn-primary rounded-full btn-sm text-white'>
+                  {isUpdatingProfile?<LoadingSpinner/>:"Update"}
+                </button>
             </form>
         </div>
         <form method='dialog' className='modal-backdrop'>
