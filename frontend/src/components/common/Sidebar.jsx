@@ -34,6 +34,7 @@ const Sidebar = () => {
 
 
     const {data} = useQuery({queryKey: ['authUser']})
+    const {data: notifications} = useQuery({queryKey: ['notifications']});
 
   return (
     <div className='md:flex-[2-2-0]'>
@@ -49,9 +50,12 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className='flex justify-center md:justify-start'>
-                    <Link to='/notifications' className='flex gap-3 items-center hover:bg-stone-900 transition-all rounded-2xl duration-300 py-2 pl-2 pr-2 md:pr-4 max-w-fit cursor-pointer'>
+                    <Link to='/notifications' className='relative flex gap-3 items-center hover:bg-stone-900 transition-all rounded-2xl duration-300 py-2 pl-2 pr-2 md:pr-4 max-w-fit cursor-pointer'>
                         <IoNotifications className='w-8 h-8'/>
                         <span className='text-lg hidden md:block'>Notifications</span>
+                        <span className='absolute top-0 left-6 bg-primary px-1 min-w-6 flex justify-center items-center rounded-full text-base-100'>
+                            {notifications.length}
+                        </span>
                     </Link>
                 </li>
                 <li className='flex justify-center md:justify-start'>
