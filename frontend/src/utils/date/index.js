@@ -22,7 +22,8 @@ export const formatMemberSinceData = (createdAt) => {
 
 export const formatPostDate = (createdAt) => {
     const createdAtDate = new Date(createdAt).toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+    const createdAtTime = new Date(createdAt).toLocaleTimeString('en-US', {timeStyle:'short'});
 
 
-    return createdAtDate;
+    return `${createdAtDate} ${createdAtTime}`;
 }
