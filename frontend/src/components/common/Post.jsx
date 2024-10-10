@@ -121,11 +121,11 @@ const Post = ({ post }) => {
 					</Link>
 				</div>
 				<div className='flex flex-col flex-1'>
-					<div className='flex gap-2 items-center'>
-						<Link to={`/profile/${postOwner.username}`} className='font-bold'>
+					<div className='flex gap-2 flex-wrap items-center'>
+						<Link to={`/profile/${postOwner.username}`} className='font-bold truncate'>
 							{postOwner.fullName}
 						</Link>
-						<span className='text-gray-700 flex gap-1 text-sm'>
+						<span className='text-gray-700 flex flex-wrap justify-between gap-1 text-sm'>
 							<Link to={`/profile/${postOwner.username}`}>@{postOwner.username}</Link>
 							<span>·</span>
 							<span>{formattedDate}</span>
@@ -203,12 +203,12 @@ const Post = ({ post }) => {
 										onSubmit={handlePostComment}
 									>
 										<textarea
-											className='textarea w-full p-1 rounded text-md resize-none border focus:outline-none  border-gray-800'
+											className='textarea w-full p-3 rounded text-md resize-none border focus:outline-none  border-gray-800'
 											placeholder='Add a comment...'
 											value={comment}
 											onChange={(e) => setComment(e.target.value)}
 										/>
-										<button className='btn btn-secondary rounded-full btn-sm text-white px-4'>
+										<button className='btn btn-secondary rounded-full btn-sm  px-4'>
 											{isCommenting ? (
 												<LoadingSpinner size="sm"/>
 											) : (

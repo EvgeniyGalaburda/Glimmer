@@ -30,7 +30,7 @@ function App() {
   }
 
   return (
-    <div className='bg-base-200 scrollbar-none'>
+    <div className='bg-base-200'>
     <div className='flex max-w-7xl mx-auto'>
       <Routes>
         <Route path='/*' element={data ? <AppRoutes/>: <Navigate to='/login'/>}/>

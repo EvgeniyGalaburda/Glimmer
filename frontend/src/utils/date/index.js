@@ -21,9 +21,12 @@ export const formatMemberSinceData = (createdAt) => {
 };
 
 export const formatPostDate = (createdAt) => {
-    const createdAtDate = new Date(createdAt).toLocaleDateString('en-US', {month: 'short', day: 'numeric'});
+    const date = new Date(createdAt);
+    const day = String(date.getDate()).padStart(2, '0'); 
+    const month = String(date.getMonth() + 1).padStart(2, '0'); 
+    const year = String(date.getFullYear()).slice(-2);
     const createdAtTime = new Date(createdAt).toLocaleTimeString('en-US', {timeStyle:'short'});
 
 
-    return `${createdAtDate} ${createdAtTime}`;
+    return `${day}/${month}/${year} ${createdAtTime}`;
 }

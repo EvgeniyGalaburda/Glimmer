@@ -31,14 +31,26 @@ const Sidebar = () => {
             }
         } 
     })
+    const {data: notifications} = useQuery({
+        queryKey: ['notifications'],
+        queryFn: async () => {
+            try {
+                const res = await fetch('/api/notifications');
+                const data = await res.json();
 
+                if(!res.ok) throw new Error(data.error)
+                return data;
+            } catch (error) {
+                throw new Error(error)
+            }
+        }
+    })
 
     const {data} = useQuery({queryKey: ['authUser']})
-    const {data: notifications} = useQuery({queryKey: ['notifications']});
 
   return (
-    <div className='md:flex-[2-2-0]'>
-        <div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full p-2'>
+    <div className='flex-[1_1_0] p-2'>
+        <div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 w-20 md:w-full'>
             <Link to='/' className='flex justify-center md:justify-start'>
                 <img src={glimmer} className='md:w-12 md:h-12  w-10 rounded-full' alt="" />
             </Link>

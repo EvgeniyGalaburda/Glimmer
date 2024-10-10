@@ -4,8 +4,10 @@ import {useRef, useState} from 'react';
 import { IoCloseSharp } from 'react-icons/io5';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import EmojiPicker from 'emoji-picker-react';
 
 const CreatePost = () => {
+  const [picker, setPicker] = useState(false)
   const [text, setText] = useState('');
   const [img, setImg] = useState();
   const imgRef = useRef(null);
@@ -54,6 +56,10 @@ const CreatePost = () => {
       reader.readAsDataURL(file);
     }
   }
+
+  const handleEmojiClick = (emojiObject) => {
+    setText(t => t + emojiObject);
+  }
   return (
     <div className='flex p-4 items-start gap-4 border-b border-gray-700'>
       <div className='avatar'>
@@ -61,7 +67,7 @@ const CreatePost = () => {
       </div>
       <form className='flex flex-col gap-2 w-full' onSubmit={handleSubmit}>
         <textarea
-          className='textarea w-full p-2 text-lg resize-none border-none'
+          className='textarea w-full p-2 text-lg resize-none border-none sm:text-sm'
           placeholder='What is happening?'
           value={text}
           onChange={(e) => setText(e.target.value)}/>
@@ -76,14 +82,17 @@ const CreatePost = () => {
           )}
 
           <div className='flex justify-between border-t py-2 border-gray-700'>
-            <div className='flex gap-2 items-center'>
+            <div className=' flex gap-2 items-center'>
               <CiImageOn
                 className='fill-secondary w-6 h-6 cursor-pointer'
                 onClick={() => imgRef.current.click()}/>
-                <BsEmojiSmileFill className='fill-secondary w-5 h-5 cursor-pointer'/>
+                <div className='relative'>
+                <BsEmojiSmileFill onClick={() => setPicker(!picker)} className='fill-secondary hidden md:block w-5 h-5 cursor-pointer'/>
+                {picker && <div className='absolute left-8 hidden md:block top-0 '><EmojiPicker onEmojiClick={({emoji}) => handleEmojiClick(emoji)} /></div>}
+                </div>
             </div>
             <input type="file" accept='image/*' hidden ref={imgRef} onChange={handleImage} />
-            <button className='btn btn-secondary rounded-full btn-sm text-base-100 px-4'>
+            <button onClick={() => setPicker(false)} className='btn btn-secondary rounded-full btn-sm text-base-100 px-4'>
               {isPending? 'Posting...':"Post"}
             </button>
           </div>
