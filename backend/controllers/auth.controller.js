@@ -11,6 +11,8 @@ export const signup = async (req, res) => {
             return res.status(400).json({error: "Invalid email format"});
         }
 
+        if(username.includes(' ')) return res.status(400).json({error:"Username must not includes spaces"});
+
         const existingUser = await User.findOne({username});
         if(existingUser){
             return res.status(400).json({error: "Username is already taken"});

@@ -72,12 +72,13 @@ const CreatePost = () => {
           value={text}
           onChange={(e) => setText(e.target.value)}/>
           {img && (
-            <div className='relative w-72 mx-auto'>
+            <div className='relative w-full mx-auto'>
               <IoCloseSharp
                 className='absolute top-0 right-0 text-white bg-gray-800 rounded-full w-5 h-5 cursor-pointer'
                 onClick={() => {setImg(null); imgRef.current.value=null}}
                 />
-                <img src={img} className='w-full mx-auto h-72 object-contain rounded' alt="" />
+                <img src={img} className='h-72 mx-auto object-contain rounded' alt="" />
+               
             </div>
           )}
 

@@ -75,8 +75,8 @@ const Sidebar = () => {
     },[searchHandler])
 
   return (
-    <div className='flex-[1_1_0]'>
-        <div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 p-2 w-20 md:w-full'>
+    <div className='w-20 md:flex-[1_1_0]'>
+        <div className='sticky top-0 left-0 h-screen flex flex-col border-r border-gray-700 p-2  md:w-full'>
             <Link to='/' className='flex justify-center md:justify-start'>
                 <img src={glimmer} className='md:w-12 md:h-12  w-10 rounded-full' alt="" />
             </Link>
