@@ -199,11 +199,11 @@ const Post = ({ post }) => {
 										))}
 									</div>
 									<form
-										className='flex gap-2 items-center mt-4  pt-2'
+										className='flex gap-5 items-center mt-4  pt-2'
 										onSubmit={handlePostComment}
 									>
 										<textarea
-											className='textarea w-full p-3 rounded text-md resize-none border focus:outline-none  border-gray-800'
+											className='textarea w-full p-3 h-16 scrollbar-none rounded text-md resize-none focus:border-secondary border border-secondary'
 											placeholder='Add a comment...'
 											value={comment}
 											onChange={(e) => setComment(e.target.value)}

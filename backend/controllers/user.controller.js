@@ -150,6 +150,24 @@ export const updateUserProfile = async (req, res) => {
 
         return res.status(200).json(user);
     } catch (error) {
-        
+        console.log("Error in updateUserProfile: ", error.message);
+        res.status(500).json({error: error.message});
+    }
+}
+
+export const getSearch = async (req, res) => {
+    const search = req.query.search;
+
+    if(!search) return res.status(200).json([]);
+    try {
+        const users = await User.find(
+            {$or:[
+                {username: {$regex: String(search), $options: 'i'} },
+                {fullName: {$regex: String(search), $options: 'i'}}
+            ]})
+        res.status(200).json(users)
+    } catch (error) {
+        console.log("Error in getSearch: ", error.message);
+        res.status(500).json({error: error.message});
     }
 }
